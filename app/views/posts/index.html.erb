@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-2 mt-4">
+    <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: 'btn btn-danger ml-4' %>
+    <h1>POSTS</h1>
+    <%= link_to "New post", new_post_path, class: 'btn btn-primary' %>
+  </div>
+  <div class="col-5">
+    <div class="col-6 mx-auto p-2">
+      <% @posts.each do |post| %>
+        <div style="border: 1px solid black; width: 600px;", class="p-4">
+          <h2>Post <%= post.id %></h2>
+          <%= post.title %>
+          <%= post.content %>
+          This post was created by <%= post.user.email %>
+          <% if post.comments.present? %>
+            <h3>Comments</h3>
+            <div class="row">
+              <% post.comments.each_with_index do |comment, index| %>
+                <div class = "col-6 border">
+                  Comment <%= index+1 %>
+                  <br>
+                  Name: <%= comment.name %>
+                  <%= rich_text_area_tag :body, value: comment.body %>
+                  Created by <%= comment.user.email %>
+                  <% if comment.user_id == @current_user.id || post.user_id == @current_user.id %>
+                    <%= link_to "Delete comment", comment_path(comment), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: 'btn btn-danger mt-2' %>
+                  <% end %>
+                </div>
+                <br>
+              <% end %>
+            </div>
+          <% end %>
+          <h3>Add a comment</h3>
+          <%= form_with(model: [post.comments.build]) do |form| %>
+              <%= form.hidden_field :post_id, value: post.id %>
+              <%= form.hidden_field :user_id, value: @current_user.id %>
+            <div class="field">
+              <%= form.label :name %><br>
+              <%= form.text_field :name %>
+            </div>
+
+            <div class="field">
+              <%= form.label :body %><br>
+              <%= form.rich_text_area :body %>
+            </div>
+
+            <div class="actions">
+              <%= form.submit "Create comment", class: 'ml-4 btn btn-primary mt-2' %>
+            </div>
+          <% end %>
+          <% if post.user == @current_user %>
+            <%= link_to "Delete post", post_path(post), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: 'btn btn-danger mt-2' %>
+          <% end %>
+        </div>
+        <br>
+      <% end %>
+    </div>
+  </div>
+</div>

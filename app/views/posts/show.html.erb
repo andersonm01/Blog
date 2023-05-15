@@ -1,0 +1,30 @@
+<!-- app/views/posts/show.html.erb -->
+<h1><%= @post.title %></h1>
+<p><%= @post.content %></p>
+
+<h2>Comments</h2>
+<ul>
+  <% @post.comments.each do |comment| %>
+    <li>
+      <strong><%= comment.name %></strong>
+      <%= comment.body %>
+    </li>
+  <% end %>
+</ul>
+
+<h3>Add a comment:</h3>
+<%= form_with(model: [@post, @comment]) do |form| %>
+  <div class="field">
+    <%= form.label :name %><br>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :body %><br>
+    <%= form.rich_text_area :body %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
